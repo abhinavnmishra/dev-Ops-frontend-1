@@ -1,30 +1,46 @@
-import { useState, useEffect} from "react";
-import axios from "axios";
+import {useState} from "react";
 const Login = () =>{
-
-    const url = "https://restaurant-app-devops.herokuapp.com/authentication/login";
-
-    const [userName, setUserName] = useState("");
+    const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
-    
-    async function submit() {
-        console.log(userName, password)
-        let data = {userName, password};
-        let result = await fetch("https://restaurant-app-devops.herokuapp.com/authentication/login", {
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        let headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        headers.append('Accept', 'application/json');
+
+        headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+        headers.append('Access-Control-Allow-Credentials', 'true');
+        headers.append('Access-Control-Allow-Methods', 'POST');
+        headers.append('Access-Control-Allow-Headers', 'Content-Type');
+
+        let raw = JSON.stringify({"username":username,"password":password});
+
+        let requestOptions = {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-        },
-        body: JSON.stringify(data) 
-        });
-        result = await result.json();
-        console.log(result);
+            body: raw,
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        fetch("https://restaurant-app-devops.herokuapp.com/authentication/login", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                if (JSON.parse(result).message === true) {
+                    localStorage.setItem('token', result.token);
+                    window.location.href = "Ordersummary";
+                }
+                else {
+                    alert("invalid username or password");
+                }
+            })
+            .catch(error => console.log('error', error));
     }
+
     return (
         <>
             <div className="container">
-                <form action="" className="form">
+                <form onSubmit={handleSubmit} className="form">
                     <div className="first">
                         <input type="text" name="Username" className="box" placeholder="Username" onChange={(e)=>{setUserName(e.target.value)}}></input>
         
@@ -32,7 +48,7 @@ const Login = () =>{
                     <div className="second">
                         <input type="password" name="password" className="box" placeholder="Password" onChange={(e)=>{setPassword(e.target.value)}}></input>
                     </div>
-                    <button type="submit" value="Login" className="submit" onClick={submit}>Submit</button>
+                    <button type="submit" className="submit">Submit</button>
                 </form> 
             </div>
         </>

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from "react";
-const Game = () =>{
+const Ordersummary = () =>{
     return(
         <div class="container-fluid table-responsive">
       <a href="#update" class="btn btn-light mt-3">UPDATE MENU</a>
@@ -64,4 +64,4 @@ const Game = () =>{
     )
 }
 
-export default Game;
+export default Ordersummary;
